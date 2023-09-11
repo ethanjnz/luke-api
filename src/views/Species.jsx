@@ -1,16 +1,43 @@
-import { useParams } from 'react-router'
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router';
+import axios from "axios";
 
-const WhatIs = (props) => {
 
-    const { whatIs } = useParams();
+
+const Species = () => {
+
+    const { id } = useParams();
+    const [race, setRace] = useState(null)
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        axios.get(`https://swapi.dev/api/species/${id}/`)
+            .then((response) => {
+                console.log(response)
+                setRace(response.data);
+            })
+            .catch(() => navigate('/error'));
+    }, [id, navigate]);
+
+    if (!race) {
+        return <p>fail</p>
+    }
 
 
     return (
-        <div>
-            <h1>{isNaN(whatIs) ? "The word is: " : "The number is:"} {whatIs}</h1>
+
+        <div className="card w-25 mx-auto m-3">
+            <h2 className="card-header">{race.name}</h2>
+            <div className="card-body">
+                <p>Classification: {race.classification}</p>
+                <p>Designation: {race.designation}</p>
+                <p>Language: {race.language}</p>
+                <p>Average Lifespan: {race.average_lifespan} years</p>
+            </div>
+
         </div>
     )
-
 }
 
-export default WhatIs
+export default Species
